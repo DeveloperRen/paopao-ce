@@ -79,5 +79,6 @@ type TweetHelpService interface {
 
 // IndexPostsService 广场首页推文列表服务
 type IndexPostsService interface {
-	IndexPosts(user *User, offset int, limit int) (*IndexTweetList, error)
+	//IndexPosts(user *User, offset int, limit int) (*IndexTweetList, error)
+	IndexPosts(user *User, longitude float64, latitude float64, offset int, limit int) (*IndexTweetList, error)
 }

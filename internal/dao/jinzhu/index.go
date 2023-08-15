@@ -41,17 +41,18 @@ type simpleIndexPostsServant struct {
 }
 
 // IndexPosts 根据userId查询广场推文列表，简单做到不同用户的主页都是不同的；
-func (s *friendIndexServant) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+func (s *friendIndexServant) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	predicates := dbr.Predicates{
 		"ORDER": []any{"is_top DESC, latest_replied_on DESC"},
 	}
 	if user == nil {
-		predicates["visibility = ?"] = []any{dbr.PostVisitPublic}
+		predicates["visibility = ? AND longitude < ? AND longitude > ? and latitude < ? and latitude > ?"] =
+			[]any{dbr.PostVisitPublic, longitude + 0.01, longitude - 0.01, latitude + 0.01, latitude - 0.01}
 	} else if !user.IsAdmin {
 		friendIds, _ := s.ams.BeFriendIds(user.ID)
 		friendIds = append(friendIds, user.ID)
-		args := []any{dbr.PostVisitPublic, dbr.PostVisitPrivate, user.ID, dbr.PostVisitFriend, friendIds}
-		predicates["visibility = ? OR (visibility = ? AND user_id = ?) OR (visibility = ? AND user_id IN ?)"] = args
+		args := []any{dbr.PostVisitPublic, dbr.PostVisitPrivate, user.ID, dbr.PostVisitFriend, friendIds, longitude + 0.01, longitude - 0.01, latitude + 0.01, latitude - 0.01}
+		predicates["visibility = ? OR (visibility = ? AND user_id = ?) OR (visibility = ? AND user_id IN ?) AND longitude < ? AND longitude > ? and latitude < ? and latitude > ?"] = args
 	}
 
 	posts, err := (&dbr.Post{}).Fetch(s.db, predicates, offset, limit)
@@ -76,21 +77,22 @@ func (s *friendIndexServant) IndexPosts(user *core.User, offset int, limit int) 
 }
 
 // IndexPosts 根据userId查询广场推文列表
-func (s *followIndexServant) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+func (s *followIndexServant) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	// TODO
 	return nil, debug.ErrNotImplemented
 }
 
 // IndexPosts 根据userId查询广场推文列表，获取公开可见Tweet或者所属用户的私有Tweet
-func (s *lightIndexServant) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+func (s *lightIndexServant) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	predicates := dbr.Predicates{
 		"ORDER": []any{"is_top DESC, latest_replied_on DESC"},
 	}
 	if user == nil {
-		predicates["visibility = ?"] = []any{dbr.PostVisitPublic}
+		predicates["visibility = ? AND longitude < ? AND longitude > ? and latitude < ? and latitude > ?"] =
+			[]any{dbr.PostVisitPublic, longitude + 0.01, longitude - 0.01, latitude + 0.01, latitude - 0.01}
 	} else if !user.IsAdmin {
-		args := []any{dbr.PostVisitPublic, dbr.PostVisitPrivate, user.ID}
-		predicates["visibility = ? OR (visibility = ? AND user_id = ?)"] = args
+		args := []any{dbr.PostVisitPublic, dbr.PostVisitPrivate, user.ID, longitude + 0.01, longitude - 0.01, latitude + 0.01, latitude - 0.01}
+		predicates["visibility = ? OR (visibility = ? AND user_id = ?) AND longitude < ? AND longitude > ? and latitude < ? and latitude > ?"] = args
 	}
 
 	posts, err := (&dbr.Post{}).Fetch(s.db, predicates, offset, limit)
@@ -114,11 +116,12 @@ func (s *lightIndexServant) IndexPosts(user *core.User, offset int, limit int) (
 	}, nil
 }
 
-// simpleCacheIndexGetPosts simpleCacheIndex 专属获取广场推文列表函数
-func (s *simpleIndexPostsServant) IndexPosts(_user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+// IndexPosts simpleCacheIndexGetPosts simpleCacheIndex 专属获取广场推文列表函数
+func (s *simpleIndexPostsServant) IndexPosts(_user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	predicates := dbr.Predicates{
-		"visibility = ?": []any{dbr.PostVisitPublic},
-		"ORDER":          []any{"is_top DESC, latest_replied_on DESC"},
+		"visibility = ? AND longitude < ? AND longitude > ? and latitude < ? and latitude > ?":
+			[]any{dbr.PostVisitPublic, longitude + 0.01, longitude - 0.01, latitude + 0.01, latitude - 0.01},
+		"ORDER": []any{"is_top DESC, latest_replied_on DESC"},
 	}
 
 	posts, err := (&dbr.Post{}).Fetch(s.db, predicates, offset, limit)

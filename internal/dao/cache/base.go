@@ -54,7 +54,7 @@ type cacheIndexSrv struct {
 	preventDuration    time.Duration
 }
 
-func (s *cacheIndexSrv) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+func (s *cacheIndexSrv) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	key := s.keyFrom(user, offset, limit)
 	posts, err := s.getPosts(key)
 	if err == nil {
@@ -62,7 +62,7 @@ func (s *cacheIndexSrv) IndexPosts(user *core.User, offset int, limit int) (*cor
 		return posts, nil
 	}
 
-	if posts, err = s.ips.IndexPosts(user, offset, limit); err != nil {
+	if posts, err = s.ips.IndexPosts(user, longitude, latitude, offset, limit); err != nil {
 		return nil, err
 	}
 	logrus.Debugf("cacheIndexSrv.IndexPosts get index posts from database by key: %s", key)

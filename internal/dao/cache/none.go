@@ -18,8 +18,8 @@ type noneCacheIndexServant struct {
 	ips core.IndexPostsService
 }
 
-func (s *noneCacheIndexServant) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
-	return s.ips.IndexPosts(user, offset, limit)
+func (s *noneCacheIndexServant) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
+	return s.ips.IndexPosts(user, longitude, latitude, offset, limit)
 }
 
 func (s *noneCacheIndexServant) SendAction(_act core.IdxAct, _post *core.Post) {

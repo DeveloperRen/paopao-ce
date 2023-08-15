@@ -29,7 +29,7 @@ type simpleCacheIndexServant struct {
 	expireIndexTick *time.Ticker
 }
 
-func (s *simpleCacheIndexServant) IndexPosts(user *core.User, offset int, limit int) (*core.IndexTweetList, error) {
+func (s *simpleCacheIndexServant) IndexPosts(user *core.User, longitude float64, latitude float64, offset int, limit int) (*core.IndexTweetList, error) {
 	cacheResp := s.atomicIndex.Load().(*core.IndexTweetList)
 	end := offset + limit
 	if cacheResp != nil {
@@ -44,7 +44,7 @@ func (s *simpleCacheIndexServant) IndexPosts(user *core.User, offset int, limit 
 	}
 
 	logrus.Debugln("simpleCacheIndexServant.IndexPosts get index posts from database")
-	return s.ips.IndexPosts(user, offset, limit)
+	return s.ips.IndexPosts(user, longitude, latitude, offset, limit)
 }
 
 func (s *simpleCacheIndexServant) SendAction(act core.IdxAct, _post *core.Post) {
