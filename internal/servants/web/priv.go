@@ -332,6 +332,8 @@ func (s *privSrv) CreateTweet(req *web.CreateTweetReq) (_ *web.CreateTweetResp, 
 		IPLoc:           utils.GetIPLoc(req.ClientIP),
 		AttachmentPrice: req.AttachmentPrice,
 		Visibility:      req.Visibility,
+		Longitude: 		 req.Longitude,
+		Latitude: 		 req.Latitude,
 	}
 	post, err = s.Ds.CreatePost(post)
 	if err != nil {

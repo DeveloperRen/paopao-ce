@@ -35,6 +35,8 @@ type TimelineReq struct {
 	Type       string              `form:"type"`
 	Page       int                 `form:"-"  binding:"-"`
 	PageSize   int                 `form:"-"  binding:"-"`
+	Longitude  float64			   `json:"longitude"`
+	Latitude   float64			   `json:"latitude"`
 }
 
 type TimelineResp base.PageResp

@@ -37,6 +37,8 @@ type Post struct {
 	AttachmentPrice int64        `json:"attachment_price"`
 	IP              string       `json:"ip"`
 	IPLoc           string       `json:"ip_loc"`
+	Longitude		float64		 `json:"longitude"`
+	Latitude		float64		 `json:"latitude"`
 }
 
 type PostFormated struct {

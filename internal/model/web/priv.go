@@ -39,6 +39,8 @@ type CreateTweetReq struct {
 	AttachmentPrice int64              `json:"attachment_price"`
 	Visibility      core.PostVisibleT  `json:"visibility"`
 	ClientIP        string             `json:"-" binding:"-"`
+	Longitude		float64			   `json:"longitude"`
+	Latitude		float64			   `json:"latitude"`
 }
 
 type CreateTweetResp core.PostFormated
